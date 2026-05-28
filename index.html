@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenBook - Review System</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white shadow-md p-4">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight">📚 OpenBook Reviews</h1>
+            <span class="text-sm bg-blue-700 px-3 py-1 rounded-full">Azure Hosted</span>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Add Review Form -->
+        <section class="md:col-span-1">
+            <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-200 sticky top-6">
+                <h2 class="text-xl font-bold mb-4 text-slate-900">Add a Book Review</h2>
+                <form id="reviewForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Book Title</label>
+                        <input type="text" id="title" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Author</label>
+                        <input type="text" id="author" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Rating</label>
+                        <select id="rating" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                            <option value="3">⭐⭐⭐ (3/5)</option>
+                            <option value="2">⭐⭐ (2/5)</option>
+                            <option value="1">⭐ (1/5)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Your Review</label>
+                        <textarea id="reviewText" rows="4" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition dynamic-button">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Right Column: Review Feed -->
+        <section class="md:col-span-2">
+            <h2 class="text-xl font-bold mb-4 text-slate-900 flex items-center justify-between">
+                <span>Latest Reviews</span>
+                <button id="refreshBtn" class="text-sm text-blue-600 hover:underline">🔄 Refresh</button>
+            </h2>
+            <div id="reviewsContainer" class="space-y-4">
+                <!-- Loading State placeholder -->
+                <div class="p-6 bg-white rounded-xl border border-slate-200 text-center text-slate-500">
+                    Loading book reviews...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript for API Communication -->
+    <script>
+        // Configuration: Point to your Azure Functions / App Service backend API route
+        // Azure Static Web Apps proxy backend routes via '/api' locally and in production
+        const API_URL = '/api/reviews';
+
+        // Sample static data placeholder if backend is not yet linked
+        let localFallbackReviews = [
+            { id: 1, title: "The Hobbit", author: "J.R.R. Tolkien", rating: 5, text: "An absolute masterpiece of fantasy literature. Perfect pacing!" },
+            { id: 2, title: "Atomic Habits", author: "James Clear", rating: 4, text: "Very actionable advice on building good routines and breaking bad ones." }
+        ];
+
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const reviewData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                rating: parseInt(document.getElementById('rating').value),
+                text: document.getElementById('reviewText').value,
+                date: new Date().toLocaleDateString()
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reviewData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('reviewForm').reset();
+                    fetchReviews();
+                } else {
+                    throw new Error('Backend unreached');
+                }
+            } catch (error) {
+                console.warn("Backend API offline. Simulating local submission.");
+                reviewData.id = Date.now();
+                localFallbackReviews.unshift(reviewData);
+                document.getElementById('reviewForm').reset();
+                renderReviews(localFallbackReviews);
+            }
+        });
+
+        async function fetchReviews() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                renderReviews(data);
+            } catch (error) {
+                console.log("Using built-in demo data.");
+                renderReviews(localFallbackReviews);
+            }
+        }
+
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+            if (reviews.length === 0) {
+                container.innerHTML = `<div class="p-6 bg-white rounded-xl border border-slate-200 text-center text-slate-500">No reviews found. Be the first to add one!</div>`;
+                return;
+            }
+            
+            container.innerHTML = reviews.map(r => `
+                <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-200 transition hover:shadow-md">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">${escapeHtml(r.title)}</h3>
+                            <p class="text-sm text-slate-500">by ${escapeHtml(r.author)}</p>
+                        </div>
+                        <div class="text-yellow-500 font-bold">${'⭐'.repeat(r.rating)}</div>
+                    </div>
+                    <p class="text-slate-700 mt-3 whitespace-pre-line">${escapeHtml(r.text)}</p>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', fetchReviews);
+        window.addEventListener('DOMContentLoaded', fetchReviews);
+    </script>
+</body>
+</html>
