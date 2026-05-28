@@ -254,67 +254,104 @@
         </section>
     </main>
 
-    <!-- Integrated JavaScript App Logic -->
+        <!-- JavaScript App Logic Verification Hook -->
     <script>
-        const API_URL = 'https://bookreview-backend-etfparheevfxedaz.eastasia-01.azurewebsites.net';
+        // Your live Azure App Service tracking address
+        const API_URL = 'https://bookreview-backend-etfparheevfxedaz.eastasia-01.azurewebsites.net/';
 
-        let localFallbackReviews = [
-            { id: 1, title: "The Hobbit", author: "J.R.R. Tolkien", rating: 5, text: "An absolute masterpiece of fantasy literature. Perfect pacing, wonderful character development, and timeless themes." },
-            { id: 2, title: "Atomic Habits", author: "James Clear", rating: 4, text: "Very actionable advice on building good routines and breaking bad ones. Highly recommended for personal productivity." }
-        ];
+        let localFallbackReviews = [];
+
+        // Track that the script module is initialized cleanly
+        console.log("App script running. Target endpoint initialized:", API_URL);
 
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log("Submit button click captured successfully! Extracting values...");
             
+            // Extract raw browser layout inputs
+            const titleValue = document.getElementById('title').value;
+            const authorValue = document.getElementById('author').value;
+            const ratingValue = document.getElementById('rating').value;
+            const textValue = document.getElementById('reviewText').value;
+
             const reviewData = {
-                title: document.getElementById('title').value,
-                author: document.getElementById('author').value,
-                rating: parseInt(document.getElementById('rating').value),
-                text: document.getElementById('reviewText').value,
-                date: new Date().toLocaleDateString()
+                title: titleValue,
+                author: authorValue,
+                rating: parseInt(ratingValue),
+                text: textValue
             };
 
+            console.log("Payload data block created ready for transport:", reviewData);
+
             try {
+                console.log("Dispatching live fetch POST request to Azure App Service...");
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(reviewData)
                 });
                 
+                console.log("Network operation completed. Response status returned:", response.status);
+                
                 if (response.ok) {
+                    const data = await response.json();
+                    console.log("Database write verified. Server returned row asset:", data);
                     document.getElementById('reviewForm').reset();
                     fetchReviews();
                 } else {
-                    throw new Error();
+                    const errData = await response.json().catch(() => ({}));
+                    console.error("Server rejected payload transaction details:", response.status, errData);
+                    alert("Submission rejected by backend cloud. Status: " + response.status);
                 }
             } catch (error) {
-                reviewData.id = Date.now();
-                localFallbackReviews.unshift(reviewData);
-                document.getElementById('reviewForm').reset();
-                renderReviews(localFallbackReviews);
+                console.error("Critical network routing failure intercepted during transport layer:", error.message);
+                alert("Network error: Cannot reach the API server at all. Check your CORS configs.");
             }
         });
 
         async function fetchReviews() {
+            console.log("Fetching live reviews stream from database...");
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error("Server error status code: " + response.status);
                 const data = await response.json();
+                console.log("Reviews retrieved from table container:", data);
                 renderReviews(data);
             } catch (error) {
-renderReviews(localFallbackReviews);
-}
-}
-function renderReviews(reviews) {
-const container = document.getElementById('reviewsContainer');
-if (reviews.length === 0) {
-container.innerHTML = <div style="text-align:center; color:#94a3b8; padding:20px;">No reviews posted yet.</div>;
-return;
-}
-container.innerHTML = reviews.map(r => <div class="review-card"> <div class="card-top"> <div> <h3 class="book-title">${escapeHtml(r.title)}</h3> <p class="book-author">by ${escapeHtml(r.author)}</p> </div> <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div> </div> <div style="height: 1px; background-color: #e2e8f0; margin: 12px 0;"></div> <p class="review-content">${escapeHtml(r.text)}</p> </div>).join('');
-}
-function escapeHtml(str) {
-return str.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'");
-}
-document.getElementById('refreshBtn').addEventListener('click', fetchReviews);
-window.addEventListener('DOMContentLoaded', fetchReviews);
+                console.error("Failed to load data stream over HTTP:", error.message);
+                renderReviews(localFallbackReviews);
+            }
+        }
+
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+            if (!reviews || reviews.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px;">No reviews posted yet. Add a review above!</div>`;
+                return;
+            }
+            
+            container.innerHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="card-top">
+                        <div>
+                            <h3 class="book-title">${escapeHtml(r.title)}</h3>
+                            <p class="book-author">by ${escapeHtml(r.author)}</p>
+                        </div>
+                        <div class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    </div>
+                    <div style="height: 1px; background-color: #e2e8f0; margin: 12px 0;"></div>
+                    <p class="review-content">${escapeHtml(r.text || '')}</p>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', fetchReviews);
+        window.addEventListener('DOMContentLoaded', fetchReviews);
+    </script>
