@@ -3,82 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenBook - Review System</title>
-    <!-- Tailwind CSS for modern styling -->
-    <script src="https://jsdelivr.net"></script>
+    <title>OpenBook - Professional Review System</title>
+    <!-- Stable Tailwind CSS via CDN -->
+    <script src="https://tailwindcss.com"></script>
+    <style>
+        /* Modern subtle background styling */
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-pattern text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-blue-600 text-white shadow-md p-4">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-tight">📚 OpenBook Reviews</h1>
-            <span class="text-sm bg-blue-700 px-3 py-1 rounded-full">Azure Hosted</span>
+    <!-- Modern Header Navigation -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-xs">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">📚</span>
+                <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r coding-gradient from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    OpenBook Reviews
+                </h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                    Azure Active
+                </span>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-5xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Main Responsive Dashboard Grid Layout -->
+    <main class="max-w-6xl w-full mx-auto p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
         
-        <!-- Left Column: Add Review Form -->
-        <section class="md:col-span-1">
-            <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-200 sticky top-6">
-                <h2 class="text-xl font-bold mb-4 text-slate-900">Add a Book Review</h2>
+        <!-- Left Side: Form Container -->
+        <section class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 lg:sticky lg:top-24">
+                <h2 class="text-lg font-bold mb-1 text-slate-900">Add a Book Review</h2>
+                <p class="text-xs text-slate-500 mb-5">Share your thoughts with the reader community.</p>
+                
                 <form id="reviewForm" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Book Title</label>
-                        <input type="text" id="title" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Book Title</label>
+                        <input type="text" id="title" required placeholder="e.g., The Midnight Library" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Author</label>
-                        <input type="text" id="author" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Author</label>
+                        <input type="text" id="author" required placeholder="e.g., Matt Haig" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Rating</label>
-                        <select id="rating" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4/5)</option>
-                            <option value="3">⭐⭐⭐ (3/5)</option>
-                            <option value="2">⭐⭐ (2/5)</option>
-                            <option value="1">⭐ (1/5)</option>
-                        </select>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Rating Score</label>
+                        <div class="relative">
+                            <select id="rating" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm appearance-none cursor-pointer">
+                                <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                <option value="3">⭐⭐⭐ (3/5)</option>
+                                <option value="2">⭐⭐ (2/5)</option>
+                                <option value="1">⭐ (1/5)</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Your Review</label>
-                        <textarea id="reviewText" rows="4" required class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Your Review Summary</label>
+                        <textarea id="reviewText" rows="4" required placeholder="What did you think about the characters, plot, and pacing?" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition dynamic-button">
-                        Submit Review
+                    <button type="submit" class="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] text-sm tracking-wide">
+                        Publish Review
                     </button>
                 </form>
             </div>
         </section>
 
-        <!-- Right Column: Review Feed -->
-        <section class="md:col-span-2">
-            <h2 class="text-xl font-bold mb-4 text-slate-900 flex items-center justify-between">
-                <span>Latest Reviews</span>
-                <button id="refreshBtn" class="text-sm text-blue-600 hover:underline">🔄 Refresh</button>
-            </h2>
+        <!-- Right Side: Reviews Live Stream Feed -->
+        <section class="lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Latest Reader Reviews</h2>
+                    <p class="text-xs text-slate-500">Real-time updates directly from the cloud backend.</p>
+                </div>
+                <button id="refreshBtn" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100">
+                    <span class="mr-1">🔄</span> Refresh Feed
+                </button>
+            </div>
+            
             <div id="reviewsContainer" class="space-y-4">
-                <!-- Loading State placeholder -->
-                <div class="p-6 bg-white rounded-xl border border-slate-200 text-center text-slate-500">
-                    Loading book reviews...
+                <!-- Data will inject here dynamically -->
+                <div class="p-8 bg-white rounded-2xl border border-slate-200/80 text-center text-slate-400 text-sm">
+                    Loading book reviews database stream...
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- JavaScript for API Communication -->
+    <!-- Unified JavaScript Logic Connection -->
     <script>
-        // Configuration: Point to your Azure Functions / App Service backend API route
-        // Azure Static Web Apps proxy backend routes via '/api' locally and in production
         const API_URL = '/api/reviews';
 
-        // Sample static data placeholder if backend is not yet linked
         let localFallbackReviews = [
-            { id: 1, title: "The Hobbit", author: "J.R.R. Tolkien", rating: 5, text: "An absolute masterpiece of fantasy literature. Perfect pacing!" },
-            { id: 2, title: "Atomic Habits", author: "James Clear", rating: 4, text: "Very actionable advice on building good routines and breaking bad ones." }
+            { id: 1, title: "The Hobbit", author: "J.R.R. Tolkien", rating: 5, text: "An absolute masterpiece of fantasy literature. Perfect pacing, wonderful character development, and timeless themes." },
+            { id: 2, title: "Atomic Habits", author: "James Clear", rating: 4, text: "Very actionable advice on building good routines and breaking bad ones. Highly recommended for personal productivity." }
         ];
 
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
@@ -103,10 +128,10 @@
                     document.getElementById('reviewForm').reset();
                     fetchReviews();
                 } else {
-                    throw new Error('Backend unreached');
+                    throw new Error();
                 }
             } catch (error) {
-                console.warn("Backend API offline. Simulating local submission.");
+                console.warn("Backend API offline. Running safe fallback loop.");
                 reviewData.id = Date.now();
                 localFallbackReviews.unshift(reviewData);
                 document.getElementById('reviewForm').reset();
@@ -121,7 +146,6 @@
                 const data = await response.json();
                 renderReviews(data);
             } catch (error) {
-                console.log("Using built-in demo data.");
                 renderReviews(localFallbackReviews);
             }
         }
@@ -129,30 +153,32 @@
         function renderReviews(reviews) {
             const container = document.getElementById('reviewsContainer');
             if (reviews.length === 0) {
-                container.innerHTML = `<div class="p-6 bg-white rounded-xl border border-slate-200 text-center text-slate-500">No reviews found. Be the first to add one!</div>`;
+                container.innerHTML = `
+                    <div class="p-8 bg-white rounded-2xl border border-slate-200 text-center text-slate-400 text-sm">
+                        No reviews posted yet. Be the first contributor!
+                    </div>`;
                 return;
             }
             
             container.innerHTML = reviews.map(r => `
-                <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-200 transition hover:shadow-md">
-                    <div class="flex justify-between items-start mb-2">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-slate-200 transition-all duration-200">
+                    <div class="flex justify-between items-start gap-4">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-900">${escapeHtml(r.title)}</h3>
-                            <p class="text-sm text-slate-500">by ${escapeHtml(r.author)}</p>
+                            <h3 class="text-base font-bold text-slate-900">${escapeHtml(r.title)}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">by <span class="font-medium text-slate-700">${escapeHtml(r.author)}</span></p>
                         </div>
-                        <div class="text-yellow-500 font-bold">${'⭐'.repeat(r.rating)}</div>
+                        <div class="text-amber-500 tracking-tight text-sm select-none shrink-0 bg-amber-50/60 px-2 py-0.5 rounded-md border border-amber-100/50">
+                            ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+                        </div>
                     </div>
-                    <p class="text-slate-700 mt-3 whitespace-pre-line">${escapeHtml(r.text)}</p>
+                    <div class="h-px bg-slate-100 my-3.5"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">${escapeHtml(r.text)}</p>
                 </div>
             `).join('');
         }
 
         function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        document.getElementById('refreshBtn').addEventListener('click', fetchReviews);
-        window.addEventListener('DOMContentLoaded', fetchReviews);
-    </script>
-</body>
-</html>
+return str.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'");
+}
+document.getElementById('refreshBtn').addEventListener('click', fetchReviews);
+window.addEventListener('DOMContentLoaded', fetchReviews);
